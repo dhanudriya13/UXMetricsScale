@@ -61,17 +61,17 @@ export default function ManualEntryForm({ onProcessData, onCancel }) {
           <form onSubmit={handleAddRecord} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-textMuted mb-1">User ID</label>
-              <input required type="text" name="user_id" value={formData.user_id} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" placeholder="user_001" />
+              <input required type="text" name="user_id" value={formData.user_id} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" placeholder="user_001" />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-textMuted mb-1">Task ID</label>
-              <input required type="text" name="task_id" value={formData.task_id} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" placeholder="Task_A" />
+              <input required type="text" name="task_id" value={formData.task_id} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" placeholder="Task_A" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-textMuted mb-1">Success State</label>
-              <select name="success_state" value={formData.success_state} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary">
+              <select name="success_state" value={formData.success_state} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary">
                 <option value="1">Full Success (1)</option>
                 <option value="0.5">Partial Success (0.5)</option>
                 <option value="0">Fail (0)</option>
@@ -81,37 +81,37 @@ export default function ManualEntryForm({ onProcessData, onCancel }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-textMuted mb-1">Errors</label>
-                <input required type="number" min="0" name="error_count" value={formData.error_count} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
+                <input required type="number" min="0" name="error_count" value={formData.error_count} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-textMuted mb-1">Time (s)</label>
-                <input required type="number" step="0.1" min="0" name="time_on_task_seconds" value={formData.time_on_task_seconds} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
+                <input required type="number" step="0.1" min="0" name="time_on_task_seconds" value={formData.time_on_task_seconds} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
               <div>
                 <label className="block text-xs font-medium text-textMuted mb-1">Path Length (L)</label>
-                <input required type="number" min="1" name="optimal_path_length" value={formData.optimal_path_length} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
+                <input required type="number" min="1" name="optimal_path_length" value={formData.optimal_path_length} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-textMuted mb-1">Unique Pgs (N)</label>
-                <input required type="number" min="1" name="pages_visited_unique" value={formData.pages_visited_unique} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
+                <input required type="number" min="1" name="pages_visited_unique" value={formData.pages_visited_unique} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-textMuted mb-1">Total Pgs (R)</label>
-                <input required type="number" min="1" name="pages_visited_total" value={formData.pages_visited_total} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
+                <input required type="number" min="1" name="pages_visited_total" value={formData.pages_visited_total} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-textMuted mb-1">SEQ Score (1-7)</label>
-              <input required type="number" min="1" max="7" name="seq_score" value={formData.seq_score} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
+              <input required type="number" min="1" max="7" name="seq_score" value={formData.seq_score} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text focus:outline-none focus:border-primary" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-textMuted mb-1">SUS Scores (10 items, 1-5)</label>
-              <input required type="text" name="sus_scores" value={formData.sus_scores} onChange={handleChange} className="w-full bg-slate-800 border border-border rounded p-2 text-text font-mono text-sm focus:outline-none focus:border-primary" placeholder="4|5|3|4|5|2|4|3|5|4" />
+              <input required type="text" name="sus_scores" value={formData.sus_scores} onChange={handleChange} className="w-full bg-white border border-border rounded p-2 text-text font-mono text-sm focus:outline-none focus:border-primary" placeholder="4|5|3|4|5|2|4|3|5|4" />
               <p className="text-xs text-textMuted mt-1">Format: number|number|... (e.g. 4|5|3|4|5|2|4|3|5|4)</p>
             </div>
 
@@ -134,14 +134,14 @@ export default function ManualEntryForm({ onProcessData, onCancel }) {
             </button>
           </div>
           
-          <div className="bg-slate-900 border border-border rounded flex-grow overflow-auto max-h-[500px]">
+          <div className="bg-slate-50 border border-border rounded flex-grow overflow-auto max-h-[500px]">
             {records.length === 0 ? (
               <div className="h-full flex items-center justify-center text-textMuted text-sm p-8">
                 No records added yet. Fill out the form to stage data.
               </div>
             ) : (
               <table className="w-full text-xs text-left text-textMuted">
-                <thead className="text-xs uppercase bg-slate-800 text-textMuted border-b border-border sticky top-0">
+                <thead className="text-xs uppercase bg-slate-100 text-textMuted border-b border-border sticky top-0">
                   <tr>
                     <th className="px-3 py-2">User</th>
                     <th className="px-3 py-2">Task</th>
@@ -152,7 +152,7 @@ export default function ManualEntryForm({ onProcessData, onCancel }) {
                 </thead>
                 <tbody>
                   {records.map((rec, i) => (
-                    <tr key={i} className="border-b border-border/50 hover:bg-slate-800/50">
+                    <tr key={i} className="border-b border-border/50 hover:bg-slate-100/50">
                       <td className="px-3 py-2 font-medium text-text">{rec.user_id}</td>
                       <td className="px-3 py-2">{rec.task_id}</td>
                       <td className="px-3 py-2">

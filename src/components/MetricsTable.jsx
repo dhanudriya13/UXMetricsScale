@@ -3,12 +3,12 @@ export default function MetricsTable({ tasks }) {
 
   return (
     <div className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden">
-      <div className="p-4 border-b border-border bg-slate-800/50">
+      <div className="p-4 border-b border-border bg-slate-100/50">
         <h3 className="text-lg font-semibold text-text">Raw Computed Metrics per Task</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-textMuted">
-          <thead className="text-xs uppercase bg-slate-800 text-textMuted border-b border-border">
+          <thead className="text-xs uppercase bg-slate-100 text-textMuted border-b border-border">
             <tr>
               <th scope="col" className="px-6 py-3">Task ID</th>
               <th scope="col" className="px-6 py-3">TCR (%)</th>
@@ -22,7 +22,7 @@ export default function MetricsTable({ tasks }) {
           </thead>
           <tbody>
             {tasks.map((task, idx) => (
-              <tr key={task.taskId} className={`border-b border-border hover:bg-slate-700/30 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-800/30'}`}>
+              <tr key={task.taskId} className={`border-b border-border hover:bg-slate-200/50 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50'}`}>
                 <td className="px-6 py-4 font-medium text-text whitespace-nowrap">
                   {task.taskId}
                 </td>

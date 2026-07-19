@@ -47,11 +47,8 @@ export function generateSampleCSV(numUsers = 50, tasks = ['Task_A', 'Task_B', 'T
   return Papa.unparse(data);
 }
 
-// Process the raw CSV into aggregated metrics
-export function processUXData(csvString) {
-  const parsed = Papa.parse(csvString, { header: true, dynamicTyping: true, skipEmptyLines: true });
-  const data = parsed.data;
-  
+// Process an array of UX records into aggregated metrics
+export function processUXRecords(data) {
   const tasks = {};
   let totalSUSSum = 0;
   let totalSUSUsers = 0;

@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Database, UploadCloud, PenLine } from 'lucide-react';
 import Papa from 'papaparse';
-import { generateSampleCSV, processUXData } from './utils/metricsEngine';
+import { generateSampleCSV, processUXRecords } from './utils/metricsEngine';
+import { initDb, fetchUXData, insertUXDataBatch } from './utils/db';
 import KPICards from './components/KPICards';
 import ChartsGrid from './components/ChartsGrid';
 import MetricsTable from './components/MetricsTable';
@@ -16,51 +17,83 @@ function App() {
   const [showManualEntry, setShowManualEntry] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Initialize DB on component mount
+  useEffect(() => {
+    initDb().catch(console.error);
+  }, []);
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     setIsProcessing(true);
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const csv = e.target.result;
-      const result = processUXData(csv);
       
-      setCsvPreview(csv.split('\n').slice(0, 5).join('\n') + '\n...');
-      setMetrics(result);
-      setIsProcessing(false);
+      try {
+        const parsed = Papa.parse(csv, { header: true, dynamicTyping: true, skipEmptyLines: true });
+        if (parsed.data.length > 0) {
+          await insertUXDataBatch(parsed.data);
+          
+          // Refresh data from DB
+          const records = await fetchUXData();
+          const result = processUXRecords(records);
+          setCsvPreview('Data successfully imported to Turso database.\nTotal records: ' + records.length);
+          setMetrics(result);
+        }
+      } catch (err) {
+        console.error('Failed to import CSV:', err);
+      } finally {
+        setIsProcessing(false);
+      }
     };
     reader.onerror = () => setIsProcessing(false);
     reader.readAsText(file);
   };
 
-  const handleLoadSampleData = () => {
+  const handleLoadSampleData = async () => {
     setIsProcessing(true);
     setShowManualEntry(false);
     
-    // Simulate network delay for effect
-    setTimeout(() => {
-      const csv = generateSampleCSV(100);
-      const result = processUXData(csv);
-      
-      setCsvPreview(csv.split('\n').slice(0, 5).join('\n') + '\n...');
-      setMetrics(result);
+    try {
+      const records = await fetchUXData();
+      if (records.length === 0) {
+        // No data, optionally we could insert some sample data here, 
+        // but for now we just show empty or insert dummy data
+        const dummyCSV = generateSampleCSV(50);
+        const parsed = Papa.parse(dummyCSV, { header: true, dynamicTyping: true, skipEmptyLines: true });
+        await insertUXDataBatch(parsed.data);
+        const newRecords = await fetchUXData();
+        const result = processUXRecords(newRecords);
+        setCsvPreview('Initialized Turso DB with sample data.\nTotal records: ' + newRecords.length);
+        setMetrics(result);
+      } else {
+        const result = processUXRecords(records);
+        setCsvPreview('Fetched from Turso Database.\nTotal records: ' + records.length);
+        setMetrics(result);
+      }
+    } catch (err) {
+      console.error('Failed to fetch from DB:', err);
+    } finally {
       setIsProcessing(false);
-    }, 600);
+    }
   };
 
-  const handleProcessManualData = (records) => {
+  const handleProcessManualData = async (records) => {
     setIsProcessing(true);
-    setTimeout(() => {
-      // Convert array of objects to CSV string so it flows through the same pipeline
-      const csv = Papa.unparse(records);
-      const result = processUXData(csv);
-      
-      setCsvPreview(csv.split('\n').slice(0, 5).join('\n') + '\n...');
+    try {
+      await insertUXDataBatch(records);
+      const allRecords = await fetchUXData();
+      const result = processUXRecords(allRecords);
+      setCsvPreview('Added manual entry to Turso Database.\nTotal records: ' + allRecords.length);
       setMetrics(result);
-      setIsProcessing(false);
       setShowManualEntry(false);
-    }, 300);
+    } catch (err) {
+      console.error('Failed to insert manual data:', err);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -84,7 +117,7 @@ function App() {
           <button
             onClick={() => setShowManualEntry(!showManualEntry)}
             disabled={isProcessing}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${showManualEntry ? 'bg-primary text-white' : 'bg-surface hover:bg-slate-700 text-text border border-border'}`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${showManualEntry ? 'bg-primary text-white' : 'bg-surface hover:bg-slate-200 text-text border border-border'}`}
           >
             <PenLine className="w-5 h-5" />
             Manual Entry
@@ -92,7 +125,7 @@ function App() {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isProcessing}
-            className="flex items-center gap-2 bg-surface hover:bg-slate-700 text-text border border-border px-5 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-surface hover:bg-slate-200 text-text border border-border px-5 py-2.5 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <UploadCloud className="w-5 h-5" />
             Upload CSV
@@ -134,9 +167,9 @@ function App() {
       ) : null}
       
       {metrics && (
-        <div className="mt-8 p-4 bg-slate-900 rounded-lg border border-border">
-          <h4 className="text-sm font-semibold text-textMuted mb-2">Simulated Raw CSV Data Preview</h4>
-          <pre className="text-xs text-textMuted overflow-x-auto p-2 bg-black/30 rounded">
+        <div className="mt-8 p-4 bg-slate-50 rounded-lg border border-border">
+          <h4 className="text-sm font-semibold text-textMuted mb-2">Database Status</h4>
+          <pre className="text-xs text-textMuted overflow-x-auto p-2 bg-slate-100 rounded whitespace-pre-wrap">
             {csvPreview}
           </pre>
         </div>
